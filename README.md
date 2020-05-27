@@ -21,7 +21,3 @@ $ yarn start
 ```bash
 $ umi build
 ```
-
-
-
-123

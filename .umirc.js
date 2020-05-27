@@ -27,19 +27,13 @@ export default {
         utils:path.resolve(__dirname,'src/utils'),
         services:path.resolve(__dirname,'src/services'),
         models:path.resolve(__dirname,'src/models'),
-        // themes:path.resolve(__dirname,'src/themes'),
         images:path.resolve(__dirname,'src/assets'),
     static:path.resolve(__dirname,'src/static')
   },
   proxy: {
     "/api": {
       "target": 'http://120.79.79.93:10003',
-      // "changeOrigin": true,
-      // "pathRewrite": { "^/api" : "/api" }
     }
   },
-  hash:true,
-  // base:'',
-  // runtimePublicPath: true,
-  // publicPath: "http://yourcdn/0to/static/"
+  hash:true
 }
