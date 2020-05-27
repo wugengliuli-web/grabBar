@@ -1,0 +1,82 @@
+## 测试
+kind: pipeline
+name: test
+
+steps:
+  - name: build
+    image: registry-vpc.cn-shenzhen.aliyuncs.com/dingteam/node:12-alpine
+    pull: always
+    commands:
+      - yarn global add umi
+      - yarn
+      - cp ip.test.js src/utils/ip.js
+      - CI=false UMI_ENV=test umi build
+
+  - name: publish
+    image: registry-vpc.cn-shenzhen.aliyuncs.com/dingteam/oss:1.6.0
+    commands:
+      - V=$(date '+%Y%m%d_%H%M%S')
+      - cp dist/index.html dist/index.$V.html
+      - ossutil config -e oss-cn-hangzhou.aliyuncs.com -i $AKI -k $AKS
+      - ossutil cp dist oss://e-assets/signature/ddsing-web-test/ -r -u
+      - echo "index.$V.html"
+    environment:
+      AKI:
+        from_secret: access_key_id
+      AKS:
+        from_secret: access_key_secret
+
+  - name: deploy
+    image: registry-vpc.cn-shenzhen.aliyuncs.com/dingteam/drone-trigger-plugin:latest
+    pull: always
+    settings:
+      entry: /web/signature/ddsing-web/
+      domain: tt.dingteam.com
+
+trigger:
+  branch:
+    - dev/*
+  event:
+    - push
+
+image_pull_secrets: # 拉取私有镜像时需要
+  - dockerconfigjson
+
+---
+## 生产
+kind: pipeline
+name: prod
+
+steps:
+  - name: build
+    image: registry-vpc.cn-shenzhen.aliyuncs.com/dingteam/node:12-alpine
+    pull: always
+    commands:
+      - yarn global add umi
+      - yarn
+      - cp ip.prod.js src/utils/ip.js
+      - CI=false UMI_ENV=prod umi build
+
+  - name: publish
+    image: registry-vpc.cn-shenzhen.aliyuncs.com/dingteam/oss:1.6.0
+    commands:
+      - V=$(date '+%Y%m%d_%H%M%S')
+      - cp dist/index.html dist/index.$V.html
+      - ossutil config -e oss-cn-hangzhou.aliyuncs.com -i $AKI -k $AKS
+      - ossutil cp dist oss://e-assets/signature/ddsing-web/ -r -u
+      - echo "index.$V.html"
+    environment:
+      AKI:
+        from_secret: access_key_id
+      AKS:
+        from_secret: access_key_secret
+
+# /web/signature/ddsing-web/
+trigger:
+  branch:
+    - master
+  event:
+    - push
+
+image_pull_secrets: # 拉取私有镜像时需要
+  - dockerconfigjson
