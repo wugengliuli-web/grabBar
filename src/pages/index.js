@@ -1,7 +1,7 @@
-import Login from './login';
+import Index from './index';
 
 export default function() {
   return (
-    <Login />
+    <Index />
   );
 }
