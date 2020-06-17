@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "dva";
 import styles from "./index.less";
-import { Table } from "antd";
+import { Table, Button } from "antd";
 import Link from 'umi/link'
 @connect(({ dataModel }) => ({
   dataModel,
@@ -53,10 +53,18 @@ class Login extends Component {
 		}
   ];
 
+  options = ['type', 'path', 'version', 'host']
+
   render() {
     return (
       <div className={styles.page}>
-        <div className={styles.left}></div>
+        <div className={styles.left}>
+          {
+            this.options.map(item => (
+              <div className={styles.item} key={item}><Link to={`/${item}`}><Button type="primary">{item}</Button></Link></div>
+            ))
+          }
+        </div>
         <div className={styles.right}>
             <Table className={styles.table} loading={this.loading} dataSource={this.dataSource} columns={this.columns} />
         </div>

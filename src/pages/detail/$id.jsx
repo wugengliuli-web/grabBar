@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "dva";
-import styles from "./index.less";
-
+import { List, Typography } from 'antd';
 
 @connect(({ dataModel }) => ({
     dataModel,
@@ -17,13 +16,24 @@ class Detail extends Component {
     get info() {
         
         const { dataModel: { list } } = this.props
-        return list[this.id]
+        return Object.entries(list[this.id])
     }
 
     render() {
-        console.log(this.info)
+
         return (
-            <div>aaa</div>
+            <div>
+                <List
+                    header={<div>数据展示</div>}
+                    bordered
+                    dataSource={this.info}
+                    renderItem={item => (
+                        <List.Item>
+                            <Typography.Text mark>[{item[0]}]</Typography.Text> {item[1]}
+                        </List.Item>
+                    )}
+                />
+            </div>
         )
     }
 }
